@@ -5,8 +5,8 @@ This guide describes the recommended workflow for setting up and managing Python
 ## Creating a New Project (GitHub)
 
 1. **GitHub Desktop**:  
-   - Create a new repository in the desired path.
-   - Initialize with a README, set `.gitignore` to Python, and choose the MIT License.
+   - Create a new repository in the desired path with `File > Create a new repository`.
+   - Initialize with a README, set `.gitignore` to Python, and choose the MIT License (most cases).
    - Push the repository to GitHub.
 
 2. **PyCharm**:  
@@ -14,18 +14,18 @@ This guide describes the recommended workflow for setting up and managing Python
 
 3. **Virtual Environment**:  
    - Create a new virtual environment using `uv`.
-   - In PyCharm: `Add New Interpreter > Add Local Interpreter`, select `Environment: New`, and choose `Type: uv`.
+   - In PyCharm: `Add New Interpreter > Add Local Interpreter`, select `Environment: Generate new`, and choose `Type: uv`, leave the rest as default.
 
 4. **Dependencies**:  
    - Open the terminal and run `uv sync` to synchronize dependencies.
    - This will generate `pyproject.toml` and `uv.lock`.
 
 5. **.gitignore**:  
-   - Ensure the `.idea` folder is ignored by uncommenting the corresponding line in `.gitignore`.
+   - Ensure the `.idea` folder is ignored by uncommenting the corresponding line in the `.gitignore`.
 
-6. **Optional**:  
+6. **(Optional)**:  
    - Create a `main.py` file.
-   - Add a run configuration: `Run > Edit Configurations... > Add New > uv run`, set a name (e.g., `main`), and select `Script: main.py`.
+   - Add a run configuration: `Run > Edit Configurations... > Add New > uv run`, set a name (e.g., `main`), and select `Script: main.py`, leave the rest as default.
 
 ---
 
@@ -53,10 +53,23 @@ This guide describes the recommended workflow for setting up and managing Python
 
 ---
 
-## Notes
+## uv Commands Overview
+
+
+### Synchronize dependencies
+Install or update all project dependencies defined in `pyproject.toml` / `uv.lock`
+
+```bash
+uv sync
+```
 
 - Use `uv add <package>` to add a new dependency to your project. This updates `pyproject.toml` and `uv.lock` automatically.
 - Use `uv remove <package>` to remove a dependency from your project. Use `uv update` to update all dependencies to their latest compatible versions.
 - Use `uv sync` to install or update all project dependencies defined in `pyproject.toml` / `uv.lock`.
 - Use `uv run <script>` to execute scripts (e.g., `uv run main.py`). Uv will automatically install only the missing dependencies required for that script.
 - For further customization, refer to the official documentation of [PyCharm](https://www.jetbrains.com/pycharm/), [GitHub Desktop](https://desktop.github.com/), and [uv](https://github.com/astral-sh/uv).
+
+
+```bash
+uv run main.py
+```
