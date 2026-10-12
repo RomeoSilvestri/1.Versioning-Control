@@ -42,7 +42,7 @@ def fit_and_evaluate(data: Path, train_fraction: float) -> tuple[dict, dict]:
 
 def write_json(path: Path, contents: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    # Explicit LF keeps the artifact bytes identical on Windows and Unix.
+    # Explicit LF keeps generated artifact hashes stable on Windows.
     with path.open("w", encoding="utf-8", newline="\n") as stream:
         stream.write(json.dumps(contents, indent=2, sort_keys=True, allow_nan=False) + "\n")
 

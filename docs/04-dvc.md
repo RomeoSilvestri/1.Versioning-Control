@@ -2,123 +2,99 @@
 
 [← Collaboration](03-collaboration.md) · [Contents](../README.md) · [Next: Lab →](05-hands-on-lab.md)
 
-## What Git stores, and what DVC stores
+## Git tracks metadata; DVC tracks contents
 
-Git is useful for source and small reviewable text. DVC records hashes of datasets
-and model artifacts in Git-tracked metadata. The actual contents live in a local
-cache and, when shared, a separate DVC remote. GitHub/GitLab are the Git remote;
-a storage folder, object store, or other supported backend is the DVC remote.
+DVC connects data and model versions to Git commits. Their contents live in a
+local **cache** and can be uploaded to a separate **DVC remote**. GitHub/GitLab
+host the Git history; the DVC remote holds the artifact contents.
 
 | Keep in Git | Keep out of Git |
 | --- | --- |
-| Code, docs, `pyproject.toml`, `uv.lock`, parameters | `.venv/`, `.idea/`, tokens, private keys |
+| Code, docs, `pyproject.toml`, `uv.lock`, parameters | `.venv/`, `.idea/`, credentials |
 | `.dvc/config`, `.dvc/.gitignore`, `.dvcignore` | `.dvc/cache/`, `.dvc/tmp/`, `.dvc/config.local` |
-| `*.dvc`, `dvc.yaml`, generated `dvc.lock` | DVC-tracked dataset/model contents |
-| Small `metrics.json` in this example | Machine-specific storage and credentials |
+| `*.dvc`, `dvc.yaml`, generated `dvc.lock` | DVC-tracked datasets and models |
+| Small `metrics.json` in this example | Generated files not intended for versioning |
 
-Small public fixtures can stay in Git. DVC is useful when files are large, binary,
-frequently replaced, or need storage separate from the source repository.
-Do not version the same output with both `dvc add` and a pipeline stage.
+Small public fixtures can stay in Git. DVC is useful for large files, binary
+artifacts, or files you want to store separately. This tutorial uses tiny files
+so you can practice the complete workflow locally.
 
-## Initialize and track an input file
+## Track a dataset
 
-In a Git project with DVC installed (`uv add dvc` for a new project):
+In an existing Git project, install DVC with `uv add dvc` if it is not already
+a dependency. Initialize DVC once, then track an existing file:
 
 ```sh
 uv run dvc init
 uv run dvc add data/raw/samples.csv
 git add .dvc .dvcignore .gitignore data/raw/samples.csv.dvc
-git commit -m "Track the baseline dataset with DVC"
+git commit -m "Track the baseline dataset"
 ```
 
-The file must exist before `dvc add`. That command caches its contents and writes
-`samples.csv.dvc`, a small pointer containing its hash, size, and relative path.
-If needed, DVC also creates a nearby `.gitignore`; commit it too. The tutorial's
-root `.gitignore` already ignores generated CSVs and models.
+`dvc add` caches the file and writes `samples.csv.dvc`, a small pointer with its
+hash and path. Git records that pointer instead of the dataset contents.
+Commit any `.gitignore` that DVC creates too; this tutorial already ignores the
+generated CSVs and models.
 
-If a file was previously tracked by Git, first use `git rm --cached FILE`, which
-keeps its working copy, then `dvc add FILE`. This affects future commits; old Git
-history still contains the file.
-See [DVC's introduction](https://doc.dvc.org/start).
+When you update the dataset, run `dvc add` again to record its new contents.
 
-## Store and retrieve contents
+## Record how the model is produced
 
-The lab uses a sibling directory as storage, avoiding cloud setup:
+The included [`dvc.yaml`](../dvc.yaml) defines a single training step:
 
-```sh
-uv run dvc remote add --local -d storage ../versioning-dvc-store
-uv run dvc remote list
-uv run dvc push
-```
-
-`--local` records machine-specific configuration in ignored `.dvc/config.local`.
-`-d` selects the default remote. A clone will need to configure this local remote
-again. A relative path is resolved against the DVC project root.
-This storage survives deleting the working copy, but a folder on the same disk is
-only a teaching remote, not an independent backup.
-
-For a team, use shared storage accessible to everyone. For example, with the
-appropriate backend dependency installed:
-
-```sh
-uv add "dvc[s3]"
-uv run dvc remote add -d storage s3://YOUR-BUCKET/YOUR-PREFIX
-git add pyproject.toml uv.lock .dvc/config
-```
-
-Configure credentials through the backend's credential mechanisms or ignored local
-settings. The example URL is a placeholder, not a provisioned bucket.
-See [remote storage](https://doc.dvc.org/user-guide/data-management/remote-storage)
-and [`remote add`](https://doc.dvc.org/command-reference/remote/add).
-
-| Command | Action |
-| --- | --- |
-| `uv run dvc push` | Upload cached contents referenced by the current version |
-| `uv run dvc fetch` | Download contents into the cache only |
-| `uv run dvc checkout` | Restore matching files from the local cache |
-| `uv run dvc pull` | Fetch and then check out matching files |
-| `uv run dvc status` | Check workspace consistency against DVC metadata |
-
-Run `dvc push` for each version you want to share. Pushing Git alone does not
-upload artifacts; pulling DVC alone does not select a different Git revision.
-
-## Record how an artifact was produced
-
-The included [`dvc.yaml`](../dvc.yaml) defines one stage: run `scripts/train.py`
-with a dataset and `train_fraction` from `params.json`, produce a cached JSON
-model, and record a small metric file with `cache: false` so it can be kept in Git.
+- **Command:** run `scripts/train.py`.
+- **Inputs:** the script, dataset, and `train_fraction` in `params.json`.
+- **Outputs:** the model and metrics.
 
 ```sh
 uv run dvc repro
-uv run dvc dag
 uv run dvc metrics show
 git add scripts/train.py params.json dvc.yaml dvc.lock metrics.json
-git commit -m "Record model recipe and baseline metrics"
+git commit -m "Record model recipe and metrics"
 ```
 
-DVC generates `dvc.lock` with the resolved input/output hashes and parameter
-values. Re-running without changes skips an up-to-date stage; changing a declared
-dependency or parameter makes it eligible to run again. `uv run dvc repro` makes
-the stage's `python` command use the project environment. DVC does not install
-Python dependencies itself.
+`repro` runs the step when a declared input changes and skips it when up to date.
+It generates `dvc.lock`, which records the input/output hashes and parameter
+values. `uv run` supplies the project's Python environment.
 
-When data changes, run `dvc add` again to update its standalone pointer, then
-`dvc repro` and commit both the data pointer and pipeline record. A model produced
-by this stage is already tracked through `dvc.lock`; do not `dvc add` it separately.
+The model is cached through the pipeline. Do not also run `dvc add` on it.
+The small metrics file uses `cache: false` in this example, so Git stores it
+directly alongside the pipeline metadata.
 
-This is a local recipe for reproducing a version, not a production scheduler.
-Reproducibility also depends on declared inputs, deterministic code, and the
-runtime; a Python lockfile does not freeze hardware or operating systems.
-See [DVC pipeline files](https://doc.dvc.org/user-guide/project-structure/dvcyaml-files)
-and [parameter formats](https://doc.dvc.org/command-reference/params).
+After changing the dataset: run `dvc add`, then `dvc repro`, review metrics, and
+commit the updated pointer, lockfile, and metrics together. After changing code
+or parameters: run `dvc repro` and commit those changes with the updated outputs'
+metadata.
 
-## Recover and compare versions
+## Share data and models
 
-With a clean working tree and a real tag named `baseline-v1`:
+Configure a remote once. The lab uses a directory next to the project:
 
-You can perform the Git switch in PyCharm or GitHub Desktop as described in
-[chapter 02](02-git.md#mark-and-inspect-a-version). The following uv/DVC steps
-still run in the terminal; GUI checkout alone does not restore ignored artifacts.
+```sh
+uv run dvc remote add --local -d storage ../versioning-dvc-store
+uv run dvc push
+```
+
+`-d` makes it the default DVC remote. `--local` keeps this machine's storage path
+in ignored `.dvc/config.local`, so each clone configures it separately.
+This folder is sufficient for the lab; a team needs shared storage accessible
+to everyone. See the [reference](06-reference.md#authentication-and-storage)
+for storage setup beyond the lab.
+
+| Command | Use |
+| --- | --- |
+| `uv run dvc push` | Upload the current version's cached artifacts |
+| `uv run dvc pull` | Download and restore the artifacts matching the current Git version |
+| `uv run dvc checkout` | Restore matching artifacts already in the local cache |
+| `uv run dvc status` | Check whether local files match their recorded version |
+
+Upload artifacts before pushing the Git commit that references them. A Git
+push alone does not upload data/models, and a Git pull alone does not restore them.
+Run DVC commands in the terminal, including PyCharm's terminal.
+
+## Recover a version
+
+Start with no uncommitted changes. Once the lab has created `baseline-v1`:
 
 ```sh
 git switch --detach baseline-v1
@@ -127,23 +103,23 @@ uv run dvc checkout
 uv run dvc status
 ```
 
-If the cache is missing, use `dvc pull` with a configured remote instead.
-`checkout` restores dataset/model bytes; `repro` executes or restores the recipe
-and may update metadata. Use checkout/pull to recover a recorded artifact.
+Git restores code, parameters, metrics, and metadata. DVC then restores the
+matching dataset/model. If the cache is empty, use `dvc pull` with a configured
+remote instead of `dvc checkout`.
 
-Compare a previous Git revision with your current workspace:
+Return to the latest version:
 
 ```sh
-uv run dvc diff baseline-v1
-uv run dvc params diff baseline-v1
-uv run dvc metrics diff baseline-v1
+git switch main
+uv sync --locked
+uv run dvc checkout
 ```
 
-Return with `git switch main`, `uv sync --locked`, and `uv run dvc checkout` (or
-`pull`). These steps also apply after a branch switch or `git revert`.
+The same DVC step is needed after switching branches in PyCharm or GitHub Desktop.
+Use checkout/pull to recover recorded artifacts; use repro to produce outputs
+after changing their inputs. The [lab](05-hands-on-lab.md) demonstrates both.
 
-For metadata conflicts, choose the intended dataset version or regenerate the
-intended dataset and run `dvc add`. Resolve code and parameters, run `dvc repro`
-to regenerate `dvc.lock`, then review and commit all related files. Do not invent
-hashes by manually combining lockfile entries. Push the resulting artifacts
-before sharing the merge.
+Documentation: [DVC introduction](https://doc.dvc.org/start),
+[pipeline files](https://doc.dvc.org/user-guide/project-structure/dvcyaml-files),
+[remote storage](https://doc.dvc.org/user-guide/data-management/remote-storage),
+[pull](https://doc.dvc.org/command-reference/pull).

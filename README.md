@@ -14,24 +14,23 @@ keeping their contents in separate storage.
 | Chapter | Use it when you need to... |
 | --- | --- |
 | [01 · Setup](docs/01-setup.md) | Create a GitHub/GitLab project, clone an existing one, or configure PyCharm and uv |
-| [02 · Everyday Git](docs/02-git.md) | Inspect, commit, branch, merge, undo, and tag changes |
-| [03 · GitHub & GitLab](docs/03-collaboration.md) | Push work, request review, and protect the main branch |
+| [02 · Everyday Git](docs/02-git.md) | Review changes, commit, push/pull, and work on branches |
+| [03 · GitHub & GitLab](docs/03-collaboration.md) | Connect a remote and review changes through PRs/MRs |
 | [04 · Data & models with DVC](docs/04-dvc.md) | Track files, configure storage, and recover matching artifacts |
 | [05 · Hands-on lab](docs/05-hands-on-lab.md) | Run the complete workflow locally, including a fresh clone |
 | [06 · Quick reference](docs/06-reference.md) | Find a command or fix a common problem |
 
-Read in order on your first visit, or jump directly to a chapter. Markdown is the
-book format: it renders in GitHub, GitLab, and PyCharm without a documentation
-server. Python scripts make the example repeatable from the terminal or IDE.
-For everyday Git, chapters 02 and 06 map terminal commands to **PyCharm** and
-**GitHub Desktop** actions. You can use either interface on the same project folder;
-Python and DVC commands run in the project terminal.
+Read chapters **01 → 02 → 03 → 04**, then run the lab in **05**. Keep **06**
+available as a reference for commands, less frequent tasks, and troubleshooting.
+The book is Markdown, readable directly in GitHub, GitLab, or PyCharm.
+Git commands include **PyCharm** and **GitHub Desktop** equivalents; Python and
+DVC commands run in the project terminal.
 
 ## What is in the repository?
 
 | Path | Purpose |
 | --- | --- |
-| `docs/` | Six linked chapters, including the original project-setup workflows |
+| `docs/` | The book and command reference |
 | `scripts/create_lab.py` | Create a new isolated practice directory |
 | `scripts/make_data.py` | Generate deterministic dataset versions 1 and 2 |
 | `scripts/train.py` | Fit a tiny linear regression using the Python standard library |
@@ -44,10 +43,9 @@ The tutorial repository contains source templates, not an initialized DVC projec
 without `.git`, `.venv`, `.idea`, credentials, or generated outputs. All practice
 commits and DVC state belong there.
 
-The pre-existing `ipykernel`, `pandas`, and `requests` dependencies are retained;
-the example itself needs only the standard library and DVC. This book stays within
-versioning and control. It does not introduce production orchestration, model
-registries, deployment, or cloud infrastructure.
+Explore the scripts during chapter 05: start with `create_lab.py`, then read
+`make_data.py`, `train.py`, `params.json`, and `dvc.yaml` before the first pipeline
+run. The example uses the Python standard library for training and DVC for versioning.
 
 ## Optional quickstart: run your first version
 

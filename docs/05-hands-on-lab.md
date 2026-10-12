@@ -6,10 +6,9 @@
 from a fresh clone. Allow about 20–30 minutes. Run the commands in PowerShell
 from the indicated directory. No hosted repository is required.
 
-The synthetic task fits `y = slope * x + intercept` using a deterministic split:
-the first 80% of rows train the model; the last 20% evaluate it. Version 2 appends
-rows with shifted targets so the artifacts and metrics visibly change. This is
-deliberate teaching data, not a recommended evaluation strategy for arbitrary ML.
+The example fits `y = slope * x + intercept`: the first 80% of rows train the
+model and the rest evaluate it. Version 2 adds 20 rows with shifted targets,
+making the model and metrics change. The task is intentionally small and deterministic.
 
 With the default `train_fraction` of `0.8`, the checkpoints are:
 
@@ -32,9 +31,9 @@ This is a local Git exercise: use **Commit**, and leave **Publish repository** /
 | 2: Stage and commit | PyCharm's **Commit** window or Desktop's **Changes**: select the source files and DVC metadata listed in the commands, inspect diffs, and commit |
 | 2 and 3: Tag the committed result | PyCharm **Git → New Tag** with a message; Desktop **History → right-click the new commit → Create Tag** |
 | 3: Create/switch branches | PyCharm's branch selector or Desktop's **Current Branch → New Branch**; name it `feature/dataset-v2` and base it on `main` |
-| 3: Commit and merge v2 | Commit the three changed metadata/metric files, run `dvc push`, switch to `main`, and merge `feature/dataset-v2`; use the CLI merge if Desktop must enforce `--ff-only` |
+| 3: Commit and merge v2 | Commit the three changed metadata/metric files, run `dvc push`, switch to `main`, and merge `feature/dataset-v2` |
 | 4: Inspect v1, then return | Check out `baseline-v1` through PyCharm's **Tags** or Desktop's tagged commit in **History → Checkout Commit**; then use the branch selector to return to `main` |
-| 5: Create the fresh local clone | Keep the provided `git clone --no-local` command for this exercise, then open the clone in either app |
+| 5: Create the fresh local clone | Run the provided `git clone` command, then open the clone in either app |
 
 GUI commits must include the `.dvc` metadata and generated `dvc.lock`, not the
 ignored CSV/model contents. Every GUI version switch still needs the following
@@ -42,6 +41,11 @@ ignored CSV/model contents. Every GUI version switch still needs the following
 [full action mapping](06-reference.md#git-commands-and-desktop-equivalents).
 
 ## 1. Create a practice project and its first artifacts
+
+Before running the commands, read the example in the tutorial folder:
+`create_lab.py` copies the practice project; `make_data.py` generates the dataset;
+`train.py` fits the model and writes metrics. Read `params.json` and `dvc.yaml`
+alongside `train.py` to see what DVC records.
 
 From the **tutorial repository root**:
 
@@ -68,7 +72,7 @@ Open the pointer and lockfile: Git will record hashes, not the dataset/model byt
 
 ## 2. Commit, tag, and upload the baseline
 
-Still in **versioning-lab**; configure your Git name/email first as in chapter 01:
+Still in **versioning-lab**; check your Git name/email as in chapter 01:
 
 ```sh
 uv run python -m unittest discover -s tests -v
@@ -101,7 +105,7 @@ git diff --staged
 git commit -m "Train on dataset v2"
 uv run dvc push
 git switch main
-git merge --ff-only feature/dataset-v2
+git merge feature/dataset-v2
 git tag -a dataset-v2 -m "Dataset v2 and its matching model"
 ```
 
@@ -109,11 +113,6 @@ Expected: 60 rows, a 48/12 split, different model coefficients, and higher test
 MSE. The first `dvc status` detects the edited input even though Git ignores the
 CSV. The local merge demonstrates the mechanics; on GitHub/GitLab, publish the
 branch and use the review workflow in chapter 03 instead.
-
-Optional parameter exercise: set `train_fraction` to `0.7` in `params.json`, run
-`dvc repro` and `dvc params diff`, then commit `params.json`, `dvc.lock`, and
-`metrics.json` together and `dvc push`. To keep this lab's two-version checkpoints,
-leave the parameter unchanged for now.
 
 ## 4. Recover the baseline and return
 
@@ -126,7 +125,6 @@ uv run dvc status
 uv run dvc checkout
 uv run dvc metrics show
 uv run dvc status
-uv run dvc repro
 git switch main
 uv sync --locked
 uv run dvc checkout
@@ -135,8 +133,8 @@ uv run dvc status
 
 Before checkout, Git has switched metadata and metrics, while ignored data and
 models may still belong to v2. After checkout, v1 has 40 rows and the 32/8 split
-again. `dvc repro` should skip the unchanged stage. Returning to `main` and checking
-out restores v2. Nothing needs to be retrained to recover these cached versions.
+again. Returning to `main` and checking out restores v2. Nothing needs to be
+retrained to recover these cached versions.
 
 ## 5. Simulate a teammate with an empty cache
 
@@ -144,7 +142,7 @@ From **versioning-lab**, move to its parent and clone:
 
 ```sh
 cd ..
-git clone --no-local versioning-lab versioning-clone
+git clone versioning-lab versioning-clone
 cd versioning-clone
 uv sync --locked
 uv run dvc remote add --local -d storage ../versioning-dvc-store

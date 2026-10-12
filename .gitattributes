@@ -1,3 +1,3 @@
-# Keep tracked text bytes stable across Windows and Unix checkouts.
+# Keep tracked text bytes stable across checkouts on Windows.
 # DVC hashes source dependencies and small Git-tracked metrics.
 * text=auto eol=lf

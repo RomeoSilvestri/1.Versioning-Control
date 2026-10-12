@@ -35,7 +35,8 @@ git config --global user.email "you@example.com"
 Replace the placeholders; use your host's private commit email if desired.
 These settings identify your commits; they do not log you in. Changing them
 requires no password and does not modify existing commits. Repository-specific
-settings override global settings.
+settings take precedence: a name/email configured for one project applies only there.
+To change a project's own identity, see [chapter 06](06-reference.md).
 
 In GitHub Desktop, check or edit them under **File → Options → Git**.
 PyCharm also prompts for missing identity when first committing. See
@@ -56,14 +57,15 @@ The examples use `main`; substitute your repository's actual branch if different
 
 ## Create a new project on GitHub
 
-The original GitHub Desktop → PyCharm → uv workflow is:
+Use GitHub Desktop → PyCharm → uv:
 
 1. In GitHub Desktop, choose **File → New repository**, select the name and local
    path, initialize a README, and choose the Python `.gitignore`. Select a license
    suitable for the project; this tutorial uses MIT.
 2. Use **Publish repository**, choosing the intended account and visibility.
 3. In PyCharm, choose **File → Open** and select the repository folder.
-4. Configure a uv environment as described below, then run `uv sync`.
+4. Configure a uv environment as described below. For a new project without
+   `pyproject.toml`, run `uv init --bare`, then `uv sync`.
 5. Ensure `.idea/` and `.venv/` are ignored. Commit `pyproject.toml` and `uv.lock`.
 6. Optionally create `main.py` and a **Run → Edit Configurations → Add → uv run**
    configuration with `main.py` as the script and the project root as the working
@@ -116,16 +118,15 @@ cd REPOSITORY
 uv sync --locked
 ```
 
-Replace all uppercase placeholders. For a project without `pyproject.toml`, follow
-its own setup instructions before migrating it to uv. Do not run `uv init` in
-this tutorial or another project that already has that file. If a uv project has
-no lockfile yet, run `uv sync` and commit the generated `uv.lock`.
+Replace the placeholders. Do not run `uv init` in a project that already has
+`pyproject.toml`. If it has no lockfile yet, use `uv sync`; if it has no uv project
+configuration, follow its own setup instructions.
 
 `git clone` downloads a Git repository and normally configures `origin` for you.
-In PyCharm, use **Git → Clone**, enter the URL, and select the destination;
-the welcome screen also offers cloning. To open a folder already cloned by
-GitHub Desktop, use **File → Open** instead of cloning again. Cloning does not
-install Python dependencies or retrieve DVC-tracked contents.
+In PyCharm, use **Git → Clone**, enter the URL, and select the destination.
+To open a folder already cloned by GitHub Desktop, use **File → Open** instead
+of cloning again. Cloning does not install Python dependencies or retrieve
+DVC-tracked contents.
 See [PyCharm repository setup](https://www.jetbrains.com/help/pycharm/set-up-a-git-repository.html).
 
 ## Configure PyCharm and uv
@@ -145,7 +146,7 @@ For this example, set the run configuration's script to `scripts/train.py` and
 working directory to the lab root. Generate the data first. Run `uv run dvc repro`
 in the IDE terminal to update DVC's record after changing code, data, or parameters.
 
-## uv commands overview
+## Daily Python commands
 
 | Command | Use |
 | --- | --- |
@@ -153,13 +154,9 @@ in the IDE terminal to update DVC's record after changing code, data, or paramet
 | `uv sync` | Resolve if needed, then synchronize the project environment |
 | `uv sync --locked` | Install from a current lockfile; fail if it needs updating |
 | `uv add PACKAGE` / `uv remove PACKAGE` | Change requirements and lockfile |
-| `uv lock --upgrade-package PACKAGE` | Update one dependency within its constraints |
-| `uv lock --upgrade` | Update all dependencies within their constraints |
 | `uv run main.py` | Run a script in the synchronized project environment |
 | `uv run dvc status` | Run a project tool without activating `.venv` |
 
-After `uv lock --upgrade`, use `uv sync` to install the new resolution.
-`uv run` checks the project's environment, including its declared dependencies;
-it is not a per-script dependency scanner. Commit both requirement and lockfile
-changes together. Details: [uv projects](https://docs.astral.sh/uv/guides/projects/)
-and [locking and syncing](https://docs.astral.sh/uv/concepts/projects/sync/).
+Commit `pyproject.toml` and `uv.lock` together when dependencies change.
+Additional commands are in [chapter 06](06-reference.md#python-environment).
+Documentation: [uv projects](https://docs.astral.sh/uv/guides/projects/).
