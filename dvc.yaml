@@ -1,0 +1,14 @@
+stages:
+  train:
+    cmd: python scripts/train.py
+    deps:
+      - scripts/train.py
+      - data/raw/samples.csv
+    params:
+      - params.json:
+          - train_fraction
+    outs:
+      - models/model.json
+    metrics:
+      - metrics.json:
+          cache: false
