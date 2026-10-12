@@ -24,6 +24,12 @@ host's private commit email if desired. Git identity does not authenticate you
 to GitHub or GitLab. The examples assume `main`; substitute your repository's
 actual default branch if different.
 
+For the same identity settings in GitHub Desktop, use **File → Options → Git**
+on Windows (**GitHub Desktop → Settings → Git** on macOS), set the name/email,
+and save. PyCharm also prompts for missing Git identity when first committing;
+the terminal commands above work for either app. See
+[Desktop Git configuration](https://docs.github.com/en/desktop/configuring-and-customizing-github-desktop/configuring-git-for-github-desktop).
+
 ## Create a new project on GitHub
 
 The original GitHub Desktop → PyCharm → uv workflow is:
@@ -55,6 +61,13 @@ git push -u origin main
 Replace the URL. Add a README, Python `.gitignore`, and license before growing the
 project. If the remote already has an initial commit, clone it instead.
 
+`git init` creates a local repository; it does not create a hosted repository.
+`git remote add origin URL` names the remote destination, and `git push` sends
+commits there. In PyCharm, **VCS → Enable Version Control Integration → Git**
+initializes Git for an existing project folder; **Git → Manage Remotes** manages
+the remote URL. GitHub Desktop's **File → New repository** performs the local
+setup, and **Publish repository** creates its GitHub destination.
+
 ## Create a new project on GitLab
 
 1. In GitLab, select **New project → Create blank project**; set the name,
@@ -83,6 +96,13 @@ Replace all uppercase placeholders. For a project without `pyproject.toml`, foll
 its own setup instructions before migrating it to uv. Do not run `uv init` in
 this tutorial or another project that already has that file. If a uv project has
 no lockfile yet, run `uv sync` and commit the generated `uv.lock`.
+
+`git clone` downloads a Git repository and normally configures `origin` for you.
+In PyCharm, use **Git → Clone**, enter the URL, and select the destination;
+the welcome screen also offers cloning. To open a folder already cloned by
+GitHub Desktop, use **File → Open** instead of cloning again. Cloning does not
+install Python dependencies or retrieve DVC-tracked contents.
+See [PyCharm repository setup](https://www.jetbrains.com/help/pycharm/set-up-a-git-repository.html).
 
 ## Configure PyCharm and uv
 

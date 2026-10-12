@@ -23,6 +23,9 @@ keeping their contents in separate storage.
 Read in order on your first visit, or jump directly to a chapter. Markdown is the
 book format: it renders in GitHub, GitLab, and PyCharm without a documentation
 server. Python scripts make the example repeatable from the terminal or IDE.
+For everyday Git, chapters 02 and 06 map terminal commands to **PyCharm** and
+**GitHub Desktop** actions. You can use either interface on the same project folder;
+Python and DVC commands run in the project terminal.
 
 ## Run your first version
 
@@ -65,7 +68,6 @@ commits and DVC state belong there.
 | `params.json`, `dvc.yaml` | Parameter and pipeline templates |
 | `pyproject.toml`, `uv.lock` | Dependency requirements and resolved versions |
 | `tests/test_example.py` | Checks for repeatability, fitting, and invalid inputs |
-| `.github/`, `.gitlab/` | Review-description templates for the two hosts |
 
 Run the example checks from the repository root:
 

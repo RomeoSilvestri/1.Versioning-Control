@@ -116,6 +116,10 @@ and [parameter formats](https://doc.dvc.org/command-reference/params).
 
 With a clean working tree and a real tag named `baseline-v1`:
 
+You can perform the Git switch in PyCharm or GitHub Desktop as described in
+[chapter 02](02-git.md#mark-and-inspect-a-version). The following uv/DVC steps
+still run in the terminal; GUI checkout alone does not restore ignored artifacts.
+
 ```sh
 git switch --detach baseline-v1
 uv sync --locked

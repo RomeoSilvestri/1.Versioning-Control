@@ -22,6 +22,9 @@ git remote add origin https://HOST/NAMESPACE/REPOSITORY.git
 
 Replace the URL. Cloning normally already creates `origin`; skip `remote add` in
 that case. To change a URL, use `git remote set-url origin URL`.
+In PyCharm, **Git → Manage Remotes** adds or edits URLs. In Desktop,
+**Repository → Repository settings → Remote** edits the primary remote URL;
+use CLI for additional named remotes.
 HTTPS uses a credential manager or a host-issued token, subject to organization
 policy. GitHub/GitLab account passwords are not the normal Git HTTPS credential.
 SSH uses a key associated with your account. Keep private keys and tokens out of
@@ -52,7 +55,7 @@ and your feature branch as the compare branch. On GitLab, open **Merge requests 
 New merge request**, choose the feature as source and `main` as target.
 Use a draft while work is incomplete, describe the resulting behavior, and record
 the checks you ran. For data/model changes, include the data revision, changed
-parameters, and metrics. This repository includes templates for both hosts.
+parameters, and metrics.
 
 Address review feedback on the same branch, commit, and push again. When accepted,
 merge in the host interface, then update your local checkout:
@@ -85,11 +88,18 @@ pushing to one does not update the other. A Git fork is also a separate reposito
 push to your fork and open a PR/MR against the original project when you lack write
 access there.
 
-## Review from PyCharm
+## The same review workflow from the desktop apps
 
-Use the Commit tool window to inspect diffs, the branch selector to switch or
-create branches, and the Git log to inspect history. PyCharm can integrate both
-GitHub PRs and GitLab MRs when the relevant account/plugin is configured.
-The IDE operates on the same repository as terminal Git. DVC commands still run
-in the project terminal with `uv run dvc ...`.
-See [PyCharm Git integration](https://www.jetbrains.com/help/pycharm/using-git-integration.html).
+| Step | PyCharm | GitHub Desktop |
+| --- | --- | --- |
+| Publish the committed feature | **Git → Push**; confirm the feature-branch target | **Publish branch** initially, then **Push origin** |
+| Open a review | Use the **Pull Requests** / **Merge Requests** tool window with the corresponding account configured, or open the host in your browser | For GitHub, **Preview Pull Request → Create Pull Request** opens the browser form; for GitLab, use its website or PyCharm |
+| Address feedback | Edit, inspect the **Commit** window, commit, and push again | Edit in PyCharm, then inspect **Changes**, commit, and **Push origin** |
+| Update after a remote merge | Branch selector → `main` → **Checkout**; **Git → Pull**, selecting `--ff-only` | **Current Branch → main**, then **Fetch origin → Pull origin** |
+
+After the Git update, run `uv sync --locked` and `uv run dvc pull` in the project
+terminal if the project uses DVC. Upload new artifacts with `uv run dvc push`
+before either app's Git push. A local GUI merge and a hosted PR/MR are different
+operations; use the hosted review process for team changes.
+See [PyCharm Git integration](https://www.jetbrains.com/help/pycharm/using-git-integration.html)
+and [Desktop pull requests](https://docs.github.com/en/desktop/working-with-your-remote-repository-on-github-or-github-enterprise/creating-an-issue-or-pull-request-from-github-desktop).

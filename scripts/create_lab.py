@@ -9,7 +9,6 @@ FILES = (
     "README.md", "LICENSE", ".gitignore", ".gitattributes", "pyproject.toml",
     "uv.lock", "params.json", "dvc.yaml", "scripts/make_data.py",
     "scripts/train.py", "scripts/create_lab.py", "tests/test_example.py",
-    ".github/PULL_REQUEST_TEMPLATE.md", ".gitlab/merge_request_templates/Default.md",
 )
 
 

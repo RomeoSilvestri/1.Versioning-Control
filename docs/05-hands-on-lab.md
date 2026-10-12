@@ -18,6 +18,29 @@ With the default `train_fraction` of `0.8`, the checkpoints are:
 | v1 | 40 | 32 / 8 | 0.0741703 |
 | v2 | 60 | 48 / 12 | 1.0712060 |
 
+## Use PyCharm or GitHub Desktop for the lab's Git steps
+
+The command blocks below are the complete terminal path. You can replace their
+Git actions with the desktop equivalents while keeping all `uv`, Python, and DVC
+commands in the project terminal. Open the lab folder in PyCharm; after `git init`,
+register that same folder in Desktop with **File → Add Local Repository**.
+This is a local Git exercise: use **Commit**, and leave **Publish repository** /
+**Publish branch** for the hosted workflow in chapter 03.
+
+| Lab step | Desktop alternative |
+| --- | --- |
+| 2: Stage and commit | PyCharm's **Commit** window or Desktop's **Changes**: select the source files and DVC metadata listed in the commands, inspect diffs, and commit |
+| 2 and 3: Tag the committed result | PyCharm **Git → New Tag** with a message; Desktop **History → right-click the new commit → Create Tag** |
+| 3: Create/switch branches | PyCharm's branch selector or Desktop's **Current Branch → New Branch**; name it `feature/dataset-v2` and base it on `main` |
+| 3: Commit and merge v2 | Commit the three changed metadata/metric files, run `dvc push`, switch to `main`, and merge `feature/dataset-v2`; use the CLI merge if Desktop must enforce `--ff-only` |
+| 4: Inspect v1, then return | Check out `baseline-v1` through PyCharm's **Tags** or Desktop's tagged commit in **History → Checkout Commit**; then use the branch selector to return to `main` |
+| 5: Create the fresh local clone | Keep the provided `git clone --no-local` command for this exercise, then open the clone in either app |
+
+GUI commits must include the `.dvc` metadata and generated `dvc.lock`, not the
+ignored CSV/model contents. Every GUI version switch still needs the following
+`uv sync --locked` and DVC checkout/pull from the command block. See the
+[full action mapping](06-reference.md#git-commands-and-desktop-equivalents).
+
 ## 1. Create a practice project and its first artifacts
 
 From the **tutorial repository root**:
@@ -49,7 +72,7 @@ Still in **versioning-lab**; configure your Git name/email first as in chapter 0
 
 ```sh
 uv run python -m unittest discover -s tests -v
-git add README.md LICENSE .gitattributes .gitignore pyproject.toml uv.lock docs scripts tests .github .gitlab
+git add README.md LICENSE .gitattributes .gitignore pyproject.toml uv.lock docs scripts tests
 git add .dvc .dvcignore data/raw/samples.csv.dvc params.json dvc.yaml dvc.lock metrics.json
 git diff --staged --stat
 git commit -m "Record reproducible baseline"
