@@ -2,7 +2,7 @@
 
 [Contents](../README.md) · [Next: Everyday Git →](02-git.md)
 
-## Prerequisites and identity
+## Prerequisites
 
 Install [Git](https://git-scm.com/downloads), [Python](https://www.python.org/downloads/),
 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
@@ -14,21 +14,45 @@ Verify the terminal can find the tools:
 git --version
 python --version
 uv --version
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-git config --global init.defaultBranch main
 ```
 
-Replace the identity placeholders. The email is recorded in commits; use your
-host's private commit email if desired. Git identity does not authenticate you
-to GitHub or GitLab. The examples assume `main`; substitute your repository's
-actual default branch if different.
+### Commit identity
 
-For the same identity settings in GitHub Desktop, use **File → Options → Git**
-on Windows (**GitHub Desktop → Settings → Git** on macOS), set the name/email,
-and save. PyCharm also prompts for missing Git identity when first committing;
-the terminal commands above work for either app. See
+Check the name and email Git will use for your commits:
+
+```sh
+git config --get user.name
+git config --get user.email
+```
+
+If missing or incorrect, set them:
+
+```sh
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+Replace the placeholders; use your host's private commit email if desired.
+These settings identify your commits; they do not log you in. Changing them
+requires no password and does not modify existing commits. Repository-specific
+settings override global settings.
+
+In GitHub Desktop, check or edit them under **File → Options → Git**.
+PyCharm also prompts for missing identity when first committing. See
 [Desktop Git configuration](https://docs.github.com/en/desktop/configuring-and-customizing-github-desktop/configuring-git-for-github-desktop).
+
+### Authentication
+
+Before accessing a private remote repository or pushing changes, sign in through
+your chosen application, if needed:
+
+- **GitHub Desktop:** sign in to your GitHub account.
+- **PyCharm:** add your account under **Settings → Version Control → GitHub / GitLab**.
+
+Authentication is not required for the local lab. For GitLab access through
+GitHub Desktop, see [chapter 03](03-collaboration.md).
+
+The examples use `main`; substitute your repository's actual branch if different.
 
 ## Create a new project on GitHub
 
@@ -112,8 +136,8 @@ created `pyproject.toml`, run `uv init --bare` first, then `uv sync`.
 `uv sync` creates `.venv` and resolves `uv.lock`; it does not initialize a project.
 
 For an existing project, run `uv sync --locked` and reuse that environment. Its
-interpreter is `.venv/Scripts/python.exe` on Windows or `.venv/bin/python` on
-macOS/Linux. Avoid creating a second environment for the same project.
+interpreter is `.venv/Scripts/python.exe`. Avoid creating a second environment
+for the same project.
 Menu labels vary by PyCharm version; see the
 [uv interpreter instructions](https://www.jetbrains.com/help/pycharm/uv.html).
 

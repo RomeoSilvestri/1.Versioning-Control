@@ -27,10 +27,36 @@ For everyday Git, chapters 02 and 06 map terminal commands to **PyCharm** and
 **GitHub Desktop** actions. You can use either interface on the same project folder;
 Python and DVC commands run in the project terminal.
 
-## Run your first version
+## What is in the repository?
+
+| Path | Purpose |
+| --- | --- |
+| `docs/` | Six linked chapters, including the original project-setup workflows |
+| `scripts/create_lab.py` | Create a new isolated practice directory |
+| `scripts/make_data.py` | Generate deterministic dataset versions 1 and 2 |
+| `scripts/train.py` | Fit a tiny linear regression using the Python standard library |
+| `params.json`, `dvc.yaml` | Parameter and pipeline templates |
+| `pyproject.toml`, `uv.lock` | Dependency requirements and resolved versions |
+| `tests/test_example.py` | Checks for repeatability, fitting, and invalid inputs |
+
+The tutorial repository contains source templates, not an initialized DVC project.
+`create_lab.py` copies the book and runnable sources into an independent directory
+without `.git`, `.venv`, `.idea`, credentials, or generated outputs. All practice
+commits and DVC state belong there.
+
+The pre-existing `ipykernel`, `pandas`, and `requests` dependencies are retained;
+the example itself needs only the standard library and DVC. This book stays within
+versioning and control. It does not introduce production orchestration, model
+registries, deployment, or cloud infrastructure.
+
+## Optional quickstart: run your first version
+
+This starts **step 1 of chapter 05** for readers who want to try the example
+immediately. On a first read, you can skip it, read chapters 01–04, and run the
+same commands when you reach the lab. Run this setup only once per lab directory.
 
 Install **Git**, **Python 3.11+**, and **uv** following [chapter 01](docs/01-setup.md).
-Open a terminal in this repository. These commands work in PowerShell and Bash:
+Open a PowerShell terminal in this repository:
 
 ```sh
 uv sync --locked
@@ -52,33 +78,13 @@ The lab directory must not already exist; choose another name for another run.
 No cloud account or external dataset is needed. Installing dependencies requires
 internet access; the exercises then use local storage.
 
-The tutorial repository contains source templates, not an initialized DVC project.
-`create_lab.py` copies the book and runnable sources into an independent directory
-without `.git`, `.venv`, `.idea`, credentials, or generated outputs. All practice
-commits and DVC state belong there.
+## Check the example
 
-## What is in the repository?
-
-| Path | Purpose |
-| --- | --- |
-| `docs/` | Six linked chapters, including the original project-setup workflows |
-| `scripts/create_lab.py` | Create a new isolated practice directory |
-| `scripts/make_data.py` | Generate deterministic dataset versions 1 and 2 |
-| `scripts/train.py` | Fit a tiny linear regression using the Python standard library |
-| `params.json`, `dvc.yaml` | Parameter and pipeline templates |
-| `pyproject.toml`, `uv.lock` | Dependency requirements and resolved versions |
-| `tests/test_example.py` | Checks for repeatability, fitting, and invalid inputs |
-
-Run the example checks from the repository root:
+Run the example checks from the tutorial or lab repository root:
 
 ```sh
 uv run python -m unittest discover -s tests -v
 ```
-
-The pre-existing `ipykernel`, `pandas`, and `requests` dependencies are retained;
-the example itself needs only the standard library and DVC. This book stays within
-versioning and control. It does not introduce production orchestration, model
-registries, deployment, or cloud infrastructure.
 
 See each chapter's official documentation links for further detail. MIT licensed;
 see [LICENSE](LICENSE).

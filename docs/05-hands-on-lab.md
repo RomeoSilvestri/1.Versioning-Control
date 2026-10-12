@@ -3,8 +3,8 @@
 [← DVC](04-dvc.md) · [Contents](../README.md) · [Next: Quick reference →](06-reference.md)
 
 **Goal:** create two versions, recover the first exactly, then retrieve the latest
-from a fresh clone. Allow about 20–30 minutes. All commands work in PowerShell or
-Bash and run in the indicated directory. No hosted repository is required.
+from a fresh clone. Allow about 20–30 minutes. Run the commands in PowerShell
+from the indicated directory. No hosted repository is required.
 
 The synthetic task fits `y = slope * x + intercept` using a deterministic split:
 the first 80% of rows train the model; the last 20% evaluate it. Version 2 appends
