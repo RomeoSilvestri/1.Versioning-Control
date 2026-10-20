@@ -10,7 +10,7 @@ Run terminal commands from the project folder unless stated otherwise.
 
 ## Prerequisites
 
-Install [Git](https://git-scm.com/downloads), [Python 3.11+](https://www.python.org/downloads/),
+Install [Git](https://git-scm.com/downloads), [Python](https://www.python.org/downloads/),
 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 [PyCharm](https://www.jetbrains.com/pycharm/) and
 [GitHub Desktop](https://desktop.github.com/) are optional interfaces.
