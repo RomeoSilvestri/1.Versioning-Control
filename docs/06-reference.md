@@ -69,7 +69,7 @@ Stash is temporary local storage. CLI `-u` includes untracked files, but not
 ignored datasets/models. PyCharm's **Shelve Changes** is a separate IDE feature.
 Use revert for shared commits; avoid `reset --hard` and force-push as routine cleanup.
 
-## DVC and Python commands
+## DVC commands
 
 Run these in the project terminal, including PyCharm's terminal. GitHub Desktop
 does not provide DVC operations, and its **Push origin**/**Pull origin** buttons
@@ -91,21 +91,29 @@ transfer Git commits, not DVC artifact contents.
 | Compare data/model metadata | `uv run dvc diff COMMIT` |
 | Show current metrics | `uv run dvc metrics show` |
 | Compare metrics / parameters | `uv run dvc metrics diff COMMIT` / `uv run dvc params diff COMMIT` |
-| Install the recorded environment | `uv sync --locked` |
-| Verify the Python example | `uv run python -m unittest discover -s tests -v` |
 
-### Python environment
+## Python environment with uv
+
+Run these in the project terminal. `uv run` uses the project's environment without
+requiring you to activate `.venv`. For the initial setup, see
+[chapter 01](01-setup.md).
 
 | Task | Command |
 | --- | --- |
 | Initialize a new Python project | `uv init --bare` |
-| Resolve and install dependencies | `uv sync` |
+| Resolve if needed and synchronize the environment | `uv sync` |
+| Install from a current lockfile; fail if it needs updating | `uv sync --locked` |
 | Add / remove a dependency | `uv add PACKAGE` / `uv remove PACKAGE` |
 | Update one dependency within its constraints | `uv lock --upgrade-package PACKAGE`, then `uv sync` |
 | Update dependencies within their constraints | `uv lock --upgrade`, then `uv sync` |
-| Run a Python script | `uv run python scripts/train.py` |
+| Run a Python script | `uv run python SCRIPT.py` |
+| Run a project tool | `uv run dvc status` |
+| Verify the tutorial's Python example | `uv run python -m unittest discover -s tests -v` |
 
+Replace `SCRIPT.py` with your script's path, such as `main.py` in chapter 01.
+`uv sync` creates `.venv` and resolves `uv.lock`; it does not initialize a project.
 Commit both `pyproject.toml` and `uv.lock` when dependencies change.
+See [uv projects](https://docs.astral.sh/uv/guides/projects/).
 
 ## Authentication and storage
 

@@ -64,35 +64,36 @@ Use GitHub Desktop → PyCharm → uv:
    suitable for the project; this tutorial uses MIT.
 2. Use **Publish repository**, choosing the intended account and visibility.
 3. In PyCharm, choose **File → Open** and select the repository folder.
-4. Configure a uv environment as described below. For a new project without
-   `pyproject.toml`, run `uv init --bare`, then `uv sync`.
-5. Ensure `.idea/` and `.venv/` are ignored. Commit `pyproject.toml` and `uv.lock`.
-6. Optionally create `main.py` and a **Run → Edit Configurations → Add → uv run**
+4. In the interpreter selector, choose **Add New Interpreter → Add Local Interpreter**,
+   then **uv**. For a new project, this creates `pyproject.toml` automatically.
+5. Run `uv sync` in the terminal to synchronize the virtual environment and
+   generate `uv.lock`.
+6. Ensure `.idea/` and `.venv/` are ignored. Commit `pyproject.toml` and `uv.lock`.
+7. Optionally create `main.py` and a **Run → Edit Configurations → Add → uv run**
    configuration with `main.py` as the script and the project root as the working
    directory. A regular Python configuration using `.venv` also works.
 
-If you prefer the CLI, create an **empty** remote repository without an initial
-README, then run these commands in a new local project folder:
+Menu labels vary by PyCharm version; see the
+[uv interpreter instructions](https://www.jetbrains.com/help/pycharm/uv.html).
+
+Alternatively, use the command line (CLI) with GitHub CLI installed and authenticated.
+In a new project folder, run:
 
 ```sh
-git init -b main
-uv init --bare
+uv init --no-package
 uv sync
-git add pyproject.toml uv.lock
+git add .
 git commit -m "Initialize Python project"
-git remote add origin https://github.com/YOUR-ACCOUNT/YOUR-REPOSITORY.git
-git push -u origin main
+git branch -M main
+gh repo create YOUR-REPOSITORY --private --source=. --remote=origin --push
 ```
 
-Replace the URL. Add a README, Python `.gitignore`, and license before growing the
-project. If the remote already has an initial commit, clone it instead.
+`uv init` creates the Python project and initializes Git locally.
+`uv sync` prepares the virtual environment and generates `uv.lock`.
+The remaining commands commit the project and publish it to GitHub.
 
-`git init` creates a local repository; it does not create a hosted repository.
-`git remote add origin URL` names the remote destination, and `git push` sends
-commits there. In PyCharm, **VCS → Enable Version Control Integration → Git**
-initializes Git for an existing project folder; **Git → Manage Remotes** manages
-the remote URL. GitHub Desktop's **File → New repository** performs the local
-setup, and **Publish repository** creates its GitHub destination.
+Before committing, ensure `.venv/` and `.idea/` are ignored and add a license
+if needed. Replace `--private` with `--public` for a public repository.
 
 ## Create a new project on GitLab
 
@@ -129,34 +130,9 @@ of cloning again. Cloning does not install Python dependencies or retrieve
 DVC-tracked contents.
 See [PyCharm repository setup](https://www.jetbrains.com/help/pycharm/set-up-a-git-repository.html).
 
-## Configure PyCharm and uv
+After synchronizing, select the existing `.venv` environment in PyCharm. On Windows,
+its interpreter is `.venv/Scripts/python.exe`. Reuse it for the project's run
+configurations rather than creating a second environment.
 
-In the interpreter selector, choose **Add New Interpreter → Add Local Interpreter**,
-then **uv**. For a new project, generate a new environment. If PyCharm has not
-created `pyproject.toml`, run `uv init --bare` first, then `uv sync`.
-`uv sync` creates `.venv` and resolves `uv.lock`; it does not initialize a project.
-
-For an existing project, run `uv sync --locked` and reuse that environment. Its
-interpreter is `.venv/Scripts/python.exe`. Avoid creating a second environment
-for the same project.
-Menu labels vary by PyCharm version; see the
-[uv interpreter instructions](https://www.jetbrains.com/help/pycharm/uv.html).
-
-For this example, set the run configuration's script to `scripts/train.py` and
-working directory to the lab root. Generate the data first. Run `uv run dvc repro`
-in the IDE terminal to update DVC's record after changing code, data, or parameters.
-
-## Daily Python commands
-
-| Command | Use |
-| --- | --- |
-| `uv init --bare` | Initialize a minimal new Python project |
-| `uv sync` | Resolve if needed, then synchronize the project environment |
-| `uv sync --locked` | Install from a current lockfile; fail if it needs updating |
-| `uv add PACKAGE` / `uv remove PACKAGE` | Change requirements and lockfile |
-| `uv run main.py` | Run a script in the synchronized project environment |
-| `uv run dvc status` | Run a project tool without activating `.venv` |
-
-Commit `pyproject.toml` and `uv.lock` together when dependencies change.
-Additional commands are in [chapter 06](06-reference.md#python-environment).
-Documentation: [uv projects](https://docs.astral.sh/uv/guides/projects/).
+For everyday dependency and Python commands, see the
+[uv reference](06-reference.md#python-environment-with-uv).

@@ -18,7 +18,7 @@ keeping their contents in separate storage.
 | [03 · GitHub & GitLab](docs/03-collaboration.md) | Connect a remote and review changes through PRs/MRs |
 | [04 · Data & models with DVC](docs/04-dvc.md) | Track files, configure storage, and recover matching artifacts |
 | [05 · Hands-on lab](docs/05-hands-on-lab.md) | Run the complete workflow locally, including a fresh clone |
-| [06 · Quick reference](docs/06-reference.md) | Find a command or fix a common problem |
+| [06 · Quick reference](docs/06-reference.md) | Find Git, uv, and DVC commands or fix a common problem |
 
 Read chapters **01 → 02 → 03 → 04**, then run the lab in **05**. Keep **06**
 available as a reference for commands, less frequent tasks, and troubleshooting.
